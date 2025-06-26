@@ -3,7 +3,7 @@ import { userRoutes } from "./routes";
 import { errorHandler } from "./middlewares";
 
 const app: Application = express();
-const port: number = 3000;
+const port: number = 8000;
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("Hello, World!");
