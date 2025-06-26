@@ -1,9 +1,25 @@
 import { Router, Request, Response } from "express";
 
-const router: Router = Router();
+const userRouter: Router = Router();
 
-router.get("/users", (_req: Request, res: Response) => {
-  res.send("Get all users");
+userRouter.get("/", (_req: Request, res: Response) => {
+  res.send({ title: "GET all users" });
 });
 
-export default router;
+userRouter.get("/:id", (_req: Request, res: Response) => {
+  res.send({ title: "GET user details" });
+});
+
+userRouter.post("/", (_req: Request, res: Response) => {
+  res.send({ title: "CREATE new user" });
+});
+
+userRouter.put("/:id", (_req: Request, res: Response) => {
+  res.send({ title: "UPDATE user" });
+});
+
+userRouter.delete("/:id", (_req: Request, res: Response) => {
+  res.send({ title: "DELETE user" });
+});
+
+export default userRouter;
