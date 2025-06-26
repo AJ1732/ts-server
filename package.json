@@ -2,7 +2,6 @@
   "name": "ts-server",
   "version": "1.0.0",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "start": "ts-node src/index.ts",
     "dev": "nodemon --watch src --ext ts --exec \"ts-node src/index.ts\"",
@@ -23,6 +22,7 @@
     "typescript-eslint": "^8.35.0"
   },
   "dependencies": {
+    "dotenv": "^16.5.0",
     "express": "^5.1.0"
   }
 }

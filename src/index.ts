@@ -1,9 +1,9 @@
 import express, { Application, Request, Response } from "express";
 import { userRoutes } from "./routes";
 import { errorHandler } from "./middlewares";
+import { PORT } from "./config/env";
 
 const app: Application = express();
-const port: number = 8000;
 
 app.get("/", (_req: Request, res: Response) => {
   res.send("Hello, World!");
@@ -12,6 +12,6 @@ app.get("/", (_req: Request, res: Response) => {
 app.use("/api/v1", userRoutes);
 app.use(errorHandler);
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
