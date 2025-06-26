@@ -9,7 +9,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("Hello, World!");
 });
 
-app.use("/api", userRoutes);
+app.use("/api/v1", userRoutes);
 app.use(errorHandler);
 
 app.listen(port, () => {
