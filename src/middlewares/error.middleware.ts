@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 
-import { AppError } from "@/types/error";
+import { AppError } from "@/utils/error";
 
 const errorMiddleware = (
   err: Error,

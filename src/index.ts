@@ -1,16 +1,15 @@
 import "dotenv/config";
-import express, { Application, Request, Response } from "express";
+import { Request, Response } from "express";
 import cookieParser from "cookie-parser";
 
 import { PORT } from "@/config/env";
+import { ExpressConfig } from "@/config/express";
 import { connectToDatabase } from "@/db/mongodb";
 import { errorMiddleware } from "@/middlewares";
 import { authRoutes, userRoutes } from "@/routes";
 
-const app: Application = express();
+const app = ExpressConfig();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use("/api/v1/auth", authRoutes);
