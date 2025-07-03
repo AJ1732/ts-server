@@ -1,6 +1,6 @@
 import { Router, Request, Response } from "express";
 
-import { getUser, getUsers } from "@/controller/user.controller";
+import { deleteUser, getUser, getUsers } from "@/controller/user.controller";
 import { authMiddleware } from "@/middlewares";
 
 const userRouter: Router = Router();
@@ -16,8 +16,6 @@ userRouter.put("/:id", (_req: Request, res: Response) => {
   res.send({ title: "UPDATE user" });
 });
 
-userRouter.delete("/:id", (_req: Request, res: Response) => {
-  res.send({ title: "DELETE user" });
-});
+userRouter.delete("/:id", authMiddleware, deleteUser);
 
 export default userRouter;

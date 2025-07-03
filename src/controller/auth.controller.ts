@@ -77,15 +77,25 @@ export const signIn = async (
     if (!isPasswordValid) throw new AppError("Invalid password", 401);
 
     const token = signJWT({ userId: user._id.toString() });
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: upassword, ...rest } = user.toObject();
 
-    res.status(200).json({
-      success: true,
-      message: "User signed in successfully",
-      data: {
-        user,
-        token,
-      },
-    });
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        maxAge: 1000 * 60 * 60 * 24,
+      })
+      .status(200)
+      .json({
+        success: true,
+        message: "User signed in successfully",
+        data: {
+          user: { ...rest },
+          // token,
+        },
+      });
   } catch (error) {
     next(error);
   }
@@ -97,7 +107,14 @@ export const signOut = async (
   // next: NextFunction
 ) => {
   try {
-    res.status(201).json({ message: "User signed out successfully" });
+    // Check this out later
+    res.cookie("token", "", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      expires: new Date(0),
+    });
+    res.status(200).json({ message: "User signed out successfully" });
   } catch (error) {
     console.error("Error during sign out:", error);
     res.status(500).json({ error: "Error during sign out" });
