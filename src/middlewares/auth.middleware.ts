@@ -16,6 +16,7 @@ interface IUser extends Document {
 
 interface AuthenticatedRequest extends Request {
   user?: IUser;
+  userId?: string;
 }
 
 const authMiddleware = async (
@@ -42,6 +43,7 @@ const authMiddleware = async (
     if (!decoded?.userId) {
       throw new AppError("Invalid token payload", 401);
     }
+    req.userId = decoded.userId;
 
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) throw new AppError("User not found", 404);

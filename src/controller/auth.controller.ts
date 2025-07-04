@@ -39,6 +39,8 @@ export const signUp = async (
     if (!newUser || newUser.length === 0) {
       token = signJWT({ userId: newUser[0]._id.toString() });
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password: upassword, ...rest } = newUser[0].toObject();
 
     await session.commitTransaction();
     session.endSession();
@@ -46,7 +48,7 @@ export const signUp = async (
       success: true,
       message: "User created successfully",
       data: {
-        user: newUser[0],
+        user: rest,
         token,
       },
     });
@@ -92,7 +94,7 @@ export const signIn = async (
         success: true,
         message: "User signed in successfully",
         data: {
-          user: { ...rest },
+          user: rest,
           // token,
         },
       });

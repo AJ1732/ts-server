@@ -53,6 +53,7 @@ export const deleteUser = async (
   try {
     const idToDelete = req.params.id;
     console.log("ID:", idToDelete);
+    console.log("USER ID:", req.userId);
 
     if (!req.userId) {
       throw new AppError("Authentication required", 401);
