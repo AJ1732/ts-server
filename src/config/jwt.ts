@@ -4,7 +4,7 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from "@/config/env";
 import { AppError } from "@/utils/error";
 
 export interface JwtPayload {
-  userId: string;
+  id: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 }
