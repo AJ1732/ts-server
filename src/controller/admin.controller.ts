@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 import { Admin } from "@/models";
 
-import { AppError } from "@/utils/error";
+import { AppError } from "@/utils/app-error";
 import { comparePassword, generateHash } from "@/config/bcrypt";
 import { signJWT } from "@/config/jwt";
 

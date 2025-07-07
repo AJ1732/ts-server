@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 
-import { AppError } from "@/utils/error";
+import { AppError } from "@/utils/app-error";
 
 export async function generateHash(
   input: string,

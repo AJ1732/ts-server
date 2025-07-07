@@ -1,7 +1,7 @@
 import { Response, NextFunction } from "express";
 
 import { verifyJWT } from "@/config/jwt";
-import { AppError } from "@/utils/error";
+import { AppError } from "@/utils/app-error";
 import { Admin } from "@/models";
 import type { AuthenticatedRequest } from "@/types/request";
 

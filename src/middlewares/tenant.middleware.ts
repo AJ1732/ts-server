@@ -2,7 +2,7 @@ import type { NextFunction, Response } from "express";
 
 import { verifyJWT } from "@/config/jwt";
 import { Tenant } from "@/models";
-import { AppError } from "@/utils/error";
+import { AppError } from "@/utils/app-error";
 import type { AuthenticatedRequest } from "@/types/request";
 
 const tenantMiddleware = async (

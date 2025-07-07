@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
 import { JWT_SECRET, JWT_EXPIRES_IN } from "@/config/env";
-import { AppError } from "@/utils/error";
+import { AppError } from "@/utils/app-error";
 
 export interface JwtPayload {
   id: string;
