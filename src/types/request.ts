@@ -17,8 +17,17 @@ export interface ITenant extends Document {
   onboardingComplete: boolean;
 }
 
+export interface IUser extends Document {
+  _id: Types.ObjectId;
+  email?: string;
+  tenantId: string;
+  warehouseId?: string;
+  role?: string;
+}
+
 export interface AuthenticatedRequest extends Request {
   id?: string;
   admin?: IAdmin;
   tenant?: ITenant;
+  user?: IUser;
 }
