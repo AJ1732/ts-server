@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { customAlphabet } from "nanoid";
 import slugify from "slugify";
 
 import {
@@ -8,8 +7,8 @@ import {
   BusinessNature,
   InventoryTypes,
 } from "@/types/tenant";
+import { nanoid } from "@/utils/nanoid";
 
-const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 7);
 const INV_ALLOWED = Object.values(INVENTORY_TYPE_OPTIONS) as InventoryTypes[];
 const BUS_ALLOWED = Object.values(BUSINESS_NATURE_OPTIONS) as BusinessNature[];
 

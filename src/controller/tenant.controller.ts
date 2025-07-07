@@ -3,9 +3,10 @@ import { Request, Response, NextFunction } from "express";
 import { signJWT } from "@/config/jwt";
 import { comparePassword, generateHash } from "@/config/bcrypt";
 import { AppError } from "@/utils/app-error";
-import { Tenant, TenantSignup } from "@/models";
+import { Tenant, TenantSignup, Warehouse } from "@/models";
 import { DocumentUpload } from "@/types/document";
 import { S3Service } from "@/services/s3.service";
+import { nanoid } from "@/utils/nanoid";
 
 export const signupTenant = async (
   req: Request,
@@ -185,7 +186,25 @@ export const onboardTenant = async (
       runValidators: true,
     });
     if (!tenant) throw new AppError("Tenant not found", 404);
-    res.status(200).json({ success: true, data: tenant });
+
+    console.log("🔎 Checking for default warehouse", {
+      tenantId: tenant.tenantId,
+    });
+    let defaultWarehouse = await Warehouse.findOne({
+      tenantId: tenant.tenantId,
+      alias: "default",
+    });
+    console.log("🔍 Found defaultWarehouse:", defaultWarehouse);
+    if (!defaultWarehouse) {
+      defaultWarehouse = await Warehouse.create({
+        tenantId: tenant.tenantId,
+        warehouseId: `WH-${nanoid()}`,
+        name: "Main Warehouse",
+        location: updates.corporateAddress || "Primary Location",
+        alias: "default",
+      });
+    }
+    res.status(200).json({ success: true, data: { tenant, defaultWarehouse } });
   } catch (error) {
     for (const f of uploadedFiles) {
       await S3Service.deleteFile(f.s3Key).catch(() => {});
