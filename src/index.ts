@@ -6,7 +6,7 @@ import { PORT } from "@/config/env";
 import { ExpressConfig } from "@/config/express";
 import { connectToDatabase } from "@/db/mongodb";
 import { errorMiddleware } from "@/middlewares";
-import { adminRoutes, tenantRoutes } from "@/routes";
+import { adminRoutes, tenantRoutes, userRoutes } from "@/routes";
 
 const app = ExpressConfig();
 
@@ -14,6 +14,7 @@ app.use(cookieParser());
 
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/tenants", tenantRoutes);
+app.use("/api/v1/users", userRoutes);
 app.use(errorMiddleware);
 
 app.get("/", (_req: Request, res: Response) => {

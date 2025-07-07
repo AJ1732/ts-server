@@ -4,12 +4,17 @@ import {
   signinTenant,
   signoutTenant,
   onboardTenant,
-  getTenants,
   getTenant,
   updateTenant,
-  deleteTenant,
-} from "@/controller/tenant.controller";
+} from "@/controllers/tenant.controller";
 import { upload, tenantMiddleware } from "@/middlewares";
+import {
+  createUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  updateUser,
+} from "@/controllers/user.controller";
 
 const tenantRouter = Router();
 
@@ -30,8 +35,9 @@ tenantRouter.post(
   ]),
   onboardTenant
 );
-tenantRouter.get("/", getTenants);
-tenantRouter.get("/:tenantId", getTenant);
+
+// Profile routes
+tenantRouter.get("/:tenantId", getTenant); // ✅
 tenantRouter.put(
   "/:tenantId",
   upload.fields([
@@ -40,7 +46,12 @@ tenantRouter.put(
     { name: "documents[utilityBill]", maxCount: 1 },
   ]),
   updateTenant
-);
-tenantRouter.delete("/:tenantId", deleteTenant);
+); // ✅
+// Users in Tenant routes
+tenantRouter.get("/:tenantId/users", getUsers); // ✅
+tenantRouter.post("/:tenantId/users", createUser); // ✅
+tenantRouter.get("/:tenantId/users/:userId", getUser); // ✅
+tenantRouter.put("/:tenantId/users/:userId", updateUser);
+tenantRouter.delete("/:tenantId/users/:userId", deleteUser);
 
 export default tenantRouter;

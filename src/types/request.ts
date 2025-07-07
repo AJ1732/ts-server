@@ -6,8 +6,6 @@ export interface IAdmin extends Document {
   name: string;
   email: string;
   password: string;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface ITenant extends Document {
