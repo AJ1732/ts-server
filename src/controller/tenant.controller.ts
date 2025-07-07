@@ -135,7 +135,7 @@ export const onboardTenant = async (
         if (oldDoc?.s3Key) {
           await S3Service.deleteFile(oldDoc.s3Key);
         }
-        console.log(`📤 Uploading ${documentType} for tenant ${tenantId}...`);
+        // console.log(`📤 Uploading ${documentType} for tenant ${tenantId}...`);
 
         const uploadResult = await S3Service.uploadFile(
           file,
@@ -154,9 +154,7 @@ export const onboardTenant = async (
           mimeType: uploadResult.mimeType,
         };
 
-        console.log(
-          `✅ ${documentType} uploaded successfully: ${uploadResult.key}`
-        );
+        // console.log(`✅ ${documentType} uploaded successfully: ${uploadResult.key}`);
       } catch (uploadError) {
         console.error(`❌ Failed to upload ${documentType}:`, uploadError);
         if (uploadError instanceof Error) {
@@ -180,7 +178,7 @@ export const onboardTenant = async (
     };
     updates.onboardingComplete = true;
 
-    console.log("Updates", updates);
+    // console.log("Updates", updates);
 
     const tenant = await Tenant.findOneAndUpdate({ tenantId }, updates, {
       new: true,
