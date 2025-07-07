@@ -150,17 +150,26 @@ const TenantSchema = new mongoose.Schema(
       cacCertificate: {
         filename: String,
         fileUrl: String,
+        s3Key: String,
         uploadedAt: Date,
+        size: Number,
+        mimeType: String,
       },
       validId: {
         filename: String,
         fileUrl: String,
+        s3Key: String,
         uploadedAt: Date,
+        size: Number,
+        mimeType: String,
       },
       utilityBill: {
         filename: String,
         fileUrl: String,
+        s3Key: String,
         uploadedAt: Date,
+        size: Number,
+        mimeType: String,
       },
     },
     // Account Status

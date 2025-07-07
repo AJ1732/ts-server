@@ -5,6 +5,7 @@ import {
   DeleteObjectCommand,
   ListObjectsV2Command,
   GetObjectCommand,
+  HeadObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
@@ -58,9 +59,41 @@ export class S3Service {
 
   // DELETE FILE IN BUCKET
   static async deleteFile(key: string): Promise<void> {
-    await s3Client.send(
-      new DeleteObjectCommand({ Bucket: this.bucket, Key: key })
-    );
+    if (!key) {
+      console.warn("⚠️ Attempted to delete file with empty key");
+      return;
+    }
+
+    try {
+      // First check if file exists
+      const exists = await this.fileExists(key);
+      if (!exists) return;
+
+      await s3Client.send(
+        new DeleteObjectCommand({ Bucket: this.bucket, Key: key })
+      );
+    } catch (error) {
+      console.error(`❌ Failed to delete file ${key}:`, error);
+      throw error;
+    }
+  }
+
+  static async fileExists(key: string): Promise<boolean> {
+    try {
+      await s3Client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: key })
+      );
+      return true;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      if (
+        error.name === "NotFound" ||
+        error.$metadata?.httpStatusCode === 404
+      ) {
+        return false;
+      }
+      throw error;
+    }
   }
 
   // Generate signed URL for downloading
@@ -78,5 +111,19 @@ export class S3Service {
       new ListObjectsV2Command({ Bucket: this.bucket, Prefix: prefix })
     );
     return (resp.Contents ?? []).map((obj) => obj.Key!).filter(Boolean);
+  }
+
+  // CLEAN UP OLD FILES
+  static async cleanupTenantFiles(tenantId: string): Promise<void> {
+    const prefix = `tenant-documents/${tenantId}/`;
+    const files = await this.listFiles(prefix);
+
+    for (const file of files) {
+      try {
+        await this.deleteFile(file);
+      } catch (error) {
+        console.error(`Failed to delete ${file}:`, error);
+      }
+    }
   }
 }

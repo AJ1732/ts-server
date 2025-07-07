@@ -239,6 +239,14 @@ export const updateTenant = async (
       | Record<string, Express.Multer.File[]>
       | undefined;
 
+    // Parse JSON strings from form data if they exist
+    if (typeof updates.inventoryTypes === "string") {
+      updates.inventoryTypes = JSON.parse(updates.inventoryTypes);
+    }
+    if (typeof updates.natureOfBusiness === "string") {
+      updates.natureOfBusiness = JSON.parse(updates.natureOfBusiness);
+    }
+
     if (files && Object.keys(files).length > 0) {
       const existingTenant = await Tenant.findOne({ tenantId }).lean();
       if (!existingTenant) throw new AppError("Tenant not found", 404);
@@ -253,24 +261,47 @@ export const updateTenant = async (
         const file = arr[0];
         const docType = field.replace("documents[", "").replace("]", "");
 
-        // delete old
-        const old = docsMap?.[docType];
-        if (old?.s3Key) await S3Service.deleteFile(old.s3Key);
+        try {
+          // DELETE OLD FILE
+          const old = docsMap?.[docType];
+          if (old?.s3Key) {
+            try {
+              await S3Service.deleteFile(old.s3Key);
+            } catch (deleteError) {
+              console.error(
+                `❌ Failed to delete old file ${old.s3Key}:`,
+                deleteError
+              );
+            }
+          } else {
+            console.warn(`ℹ️ No old file to delete for ${docType}`);
+          }
 
-        // upload new
-        const result = await S3Service.uploadFile(
-          file,
-          `tenant-documents/${tenantId}`
-        );
-        uploadedFiles.push({ s3Key: result.key, documentType: docType });
-        docUpdates[docType] = {
-          filename: result.originalName,
-          fileUrl: result.location,
-          s3Key: result.key,
-          uploadedAt: new Date(),
-          size: result.size,
-          mimeType: result.mimeType,
-        };
+          // UPLOAD NEW FILE
+          const result = await S3Service.uploadFile(
+            file,
+            `tenant-documents/${tenantId}`
+          );
+          uploadedFiles.push({ s3Key: result.key, documentType: docType });
+          docUpdates[docType] = {
+            filename: result.originalName,
+            fileUrl: result.location,
+            s3Key: result.key,
+            uploadedAt: new Date(),
+            size: result.size,
+            mimeType: result.mimeType,
+          };
+        } catch (uploadError) {
+          console.error(`❌ Failed to update ${docType}:`, uploadError);
+          throw new AppError(
+            `Failed to update ${docType}: ${
+              uploadError instanceof Error
+                ? uploadError.message
+                : "Unknown error"
+            }`,
+            500
+          );
+        }
       }
       updates.documents = { ...(docsMap || {}), ...docUpdates };
     }
@@ -282,6 +313,11 @@ export const updateTenant = async (
     if (!updated) throw new AppError("Tenant not found", 404);
     res.status(200).json({ success: true, data: updated });
   } catch (error) {
+    for (const file of uploadedFiles) {
+      await S3Service.deleteFile(file.s3Key).catch(() => {
+        console.error(`Failed to cleanup ${file.s3Key}`);
+      });
+    }
     next(error);
   }
 };

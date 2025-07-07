@@ -32,7 +32,15 @@ tenantRouter.post(
 );
 tenantRouter.get("/", getTenants);
 tenantRouter.get("/:tenantId", getTenant);
-tenantRouter.put("/:tenantId", updateTenant);
+tenantRouter.put(
+  "/:tenantId",
+  upload.fields([
+    { name: "documents[cacCertificate]", maxCount: 1 },
+    { name: "documents[validId]", maxCount: 1 },
+    { name: "documents[utilityBill]", maxCount: 1 },
+  ]),
+  updateTenant
+);
 tenantRouter.delete("/:tenantId", deleteTenant);
 
 export default tenantRouter;
